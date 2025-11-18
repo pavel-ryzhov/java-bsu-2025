@@ -262,14 +262,12 @@ public class BankGUI extends JFrame implements Listener {
     public void update(EventType type, Transaction transaction) {
         SwingUtilities.invokeLater(() -> {
             transactionTableModel.addTransaction(transaction);
-            if (type == EventType.TRANSACTION_SUCCESS) {
-                switch (transaction.getType()) {
-                    case DEPOSIT:
-                    case WITHDRAW:
-                    case TRANSFER, FREEZE:
-                        accountTableModel.setData(accountDao.findAll());
-                        break;
+            switch (type) {
+                case TRANSACTION_SUCCESS -> {
+                    accountTableModel.setData(accountDao.findAll());
+                    showMessage("УРА!", "Транзакция произведена успешно!");
                 }
+                case TRANSACTION_FAILURE -> showError("Транзакция не произведена!");
             }
         });
     }

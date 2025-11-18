@@ -32,6 +32,7 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
             var gui = new BankGUI(userDao, accountDao, transactionDao, transactionService, processor);
             eventManager.subscribe(EventType.TRANSACTION_SUCCESS, gui);
+            eventManager.subscribe(EventType.TRANSACTION_FAILURE, gui);
             gui.setVisible(true);
         });
     }
