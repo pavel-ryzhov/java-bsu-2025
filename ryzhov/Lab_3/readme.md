@@ -12,4 +12,6 @@
 ## ПРИМЕРЫ ПРЕЗ
 Я оставил в папке presentations тебе на поиграться две мои последние презы сгенеренные с Gamma AI.
 ## РАНДОМНАЯ АНИМЕ ДЕВОЧКА
-![hz](./src/main/resources/static/anime.png)
+
+<img src="./src/main/resources/static/anime.png" width="40%">
+
