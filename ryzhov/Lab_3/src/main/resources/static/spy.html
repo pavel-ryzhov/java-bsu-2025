@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Мониторинг данных</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+
+        :root {
+            --primary: #30336b;
+            --accent: #f0932b;
+            --text: #2f3542;
+            --glass: rgba(255, 255, 255, 0.90);
+            --bg-gradient: linear-gradient(135deg, #f1f2f6 0%, #dfe4ea 100%);
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: var(--bg-gradient);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .anime-side {
+            position: fixed;
+            bottom: 0;
+            height: 70vh;
+            z-index: -1;
+            pointer-events: none;
+            filter: grayscale(0.5) opacity(0.6);
+        }
+        .left-girl { left: -30px; }
+        .right-girl { right: -30px; }
+
+        .container {
+            width: 90%;
+            max-width: 700px;
+            margin-top: 80px;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 1.8em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .info-box {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #ced6e0;
+            font-size: 0.95em;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 1em;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(240, 147, 43, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(240, 147, 43, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .result-area {
+            margin-top: 30px;
+            text-align: left;
+            background: #2f3542;
+            color: #f1f2f6;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            max-height: 400px;
+            display: none;
+        }
+
+        .status-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<img src="left.png" class="anime-side left-girl" alt="">
+<img src="right.png" class="anime-side right-girl" alt="">
+
+<div class="container">
+    <div id="status-ui" class="status-tag" style="background: #dfe4ea; color: #747d8c;">ОЖИДАНИЕ ЗАПРОСА</div>
+
+    <h1>Мониторинг статистики</h1>
+    <p style="color: #747d8c;">Внешний модуль для получения данных с основного сервера</p>
+
+    <div class="info-box">
+        <b>Техническая информация:</b><br>
+        Данная страница демонстрирует работу <b>CORS</b>. Она запрашивает данные с домена <code>localhost:8080</code>, находясь при этом на <code>127.0.0.1:8080</code>.
+    </div>
+
+    <button onclick="fetchExternalData()">Обновить данные по API</button>
+
+    <div id="result" class="result-area"></div>
+</div>
+
+<script>
+    async function fetchExternalData() {
+        const resultDiv = document.getElementById('result');
+        const statusUI = document.getElementById('status-ui');
+
+        resultDiv.style.display = 'block';
+        resultDiv.innerText = "Установка соединения...";
+
+        try {
+            const response = await fetch('http://localhost:8080/api/stats');
+
+            if (response.ok) {
+                const data = await response.json();
+                resultDiv.innerText = JSON.stringify(data, null, 2);
+                resultDiv.style.color = "#2ed573";
+
+                statusUI.innerText = "СОЕДИНЕНИЕ УСТАНОВЛЕНО (CORS OK)";
+                statusUI.style.background = "#e3fcef";
+                statusUI.style.color = "#218838";
+            } else {
+                throw new Error("Сервер ответил ошибкой");
+            }
+        } catch (err) {
+            resultDiv.innerText = "ОШИБКА ДОСТУПА:\n" + err.message +
+                "\n\nВозможные причины:\n1. CORS не настроен на сервере.\n2. Сервер выключен.";
+            resultDiv.style.color = "#ff4757";
+
+            statusUI.innerText = "ОШИБКА ДОСТУПА";
+            statusUI.style.background = "#ffebee";
+            statusUI.style.color = "#c62828";
+        }
+    }
+</script>
+</body>
+</html>

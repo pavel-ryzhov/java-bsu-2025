@@ -1,0 +1,35 @@
+services:
+  app:
+    build: .
+    container_name: pptx-cleaner-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/pptx_cleaner_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    networks:
+      - ppt-net
+
+  db:
+    image: postgres:15-alpine
+    container_name: pptx-cleaner-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=pptx_cleaner_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - ppt-net
+
+volumes:
+  db_data:
+
+networks:
+  ppt-net:
+    driver: bridge
